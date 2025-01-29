@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kani-cm
+data:
+  Dockerfile: |
+    # Get the image fron dockerhub
+    FROM nginx:1.27
+    # Add the maintainer
+    LABEL maintainer='Ulrich NOUMSI'
+    # Clean the directory
+    RUN rm -rf /usr/share/nginx/html/
+    # Copy app
+    COPY . /usr/share/nginx/html/
+    # Port for my container
+    EXPOSE 8080
+    #Launch command to start Nginx
+    CMD [ "nginx", "-g", "daemon off;" ]    
+
+ 

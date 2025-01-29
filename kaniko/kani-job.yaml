@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kaniko-build
+  labels:
+    app: kaniko
+spec:
+  template:
+    metadata:
+      labels:
+        app: kaniko
+    spec:
+      containers:
+      - image: gcr.io/kaniko-project/executor:v1.6.0
+        args:
+        - "--dockerfile=/tmp/build/Dockerfile"
+        - "--context=dir:///tmp/build"
+        - "--destination={repository-name}/kaniko-app:v1"
+        name: kaniko-build
+        volumeMounts:
+        - name: kani-cm
+          mountPath: /tmp/build/Dockerfile
+          subPath: Dockerfile
+        - name: app-volume
+          mountPath: /tmp/build/
+        - name: docker-config-secret
+          mountPath: /kaniko/.docker
+      volumes:
+        - name: kani-cm
+          configMap:
+            name: kani-cm
+        - name: app-volume
+          hostPath:
+            type: DirectoryOrCreate
+            path: {pwd}/static-website-example
+        - name: docker-config-secret
+          secret:
+            secretName: docker-config-secret
+              items: .dockerconfigjson
+              key: config.json
+      restartPolicy: Never

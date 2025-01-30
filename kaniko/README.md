@@ -1,32 +1,51 @@
-Hello a tous
+# Build d'une image avec Kaniko sur Kubernetes (k3s)
 
-Nous allons realiser l'installation de Kubernetes via k3s puis realiser le build de notre image avec Kaniko
+## Introduction
 
-  
+Bonjour à tous,
 
-k3s est une version legere de kubernetes initie par rancher et qui nous permet d'avoir tres rapidement un cluster de fonctionnel
+Dans ce projet, nous allons installer Kubernetes via **k3s** et procéder au build de notre image avec **Kaniko**.
 
-kaniko est une solution qui nous permet de realiser le build d'image sans toute fois avoir besoin d'un demon docker
+- **k3s** : Une version allégée de Kubernetes initiée par Rancher, permettant de déployer rapidement un cluster fonctionnel.
+- **Kaniko** : Une solution permettant de builder des images sans nécessiter un démon Docker en cours d'exécution.
 
-  
+## Infrastructure requise
 
-notre infra:
+- **Machine virtuelle (VM)** : k3s
+- **Système d'exploitation** : Ubuntu 20.04 LTS
+- **Configuration minimale** : 1 CPU & 1 Go de RAM
+- **Configuration recommandée** : 2 CPU & 4 Go de RAM (utilisée pour ce projet)
 
--   vm: k3s
--   image: ubuntu:20.04-lts
--   4Go de RAM & 2CPU (c'est ma configuration , mais k3s demande au minimum 1 CPU et 1Go de RAM)
+## Installation de k3s
 
-Installation de k3s:
+Exécutez la commande suivante pour installer k3s :
 
--   curl https://raw.githubusercontent.com/ulrich-sun/help-script/refs/heads/main/k3s.sh | sh -
+```sh
+curl https://raw.githubusercontent.com/ulrich-sun/help-script/refs/heads/main/k3s.sh | sh -
+```
 
-recuperer les fichiers ;
+## Récupération des fichiers
 
--   git clone -b kaniko https://github.com/ulrich-sun/WorkShopDevSecOps.git
--   creer votre secret docker-registry
-    ''' bash 
-        kubectl create secret docker-registry docker-config-secret \
-        --docker-server=https://index.docker.io/v1/ \
-        --docker-username=<dockerhub-username> \
-        --docker-password=<dockerhub-password>\
-        --docker-email=<dockerhub-email> -oyaml --dry-run=client > docker-config-secret.yaml
+Clonez le dépôt contenant les fichiers nécessaires :
+
+```sh
+git clone -b kaniko https://github.com/ulrich-sun/WorkShopDevSecOps.git
+```
+
+## Création du secret Docker Registry
+
+Avant de builder l'image avec Kaniko, créez un secret Kubernetes pour l'authentification à Docker Hub :
+
+```sh
+kubectl create secret docker-registry docker-config-secret \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=<dockerhub-username> \
+  --docker-password=<dockerhub-password> \
+  --docker-email=<dockerhub-email> -o yaml --dry-run=client > docker-config-secret.yaml
+```
+
+Remplacez `<dockerhub-username>`, `<dockerhub-password>` et `<dockerhub-email>` par vos informations Docker Hub.
+
+---
+
+Vous êtes maintenant prêt à builder votre image avec Kaniko `<lien vidéo you tube>`! 🚀
